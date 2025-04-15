@@ -1,5 +1,6 @@
 from enum import Enum
 from htmlnode import LeafNode
+import re
 
 class TextType(Enum):
     TEXT = "text"
@@ -53,3 +54,12 @@ def text_node_to_html_node(text_node):
         return LeafNode(tag="img", value="", props= {"src": text_node.url, "alt": text_node.text})
 
         
+def extract_markdown_images(text):
+    pattern = r"!\[([^\]]+)\]\s*\(([^)]+)\)"
+    return re.findall(pattern, text)
+
+def extract_markdown_links(text):
+    pattern = r"\[([^\]]+)\]\s*\(([^)]+)\)"
+    return re.findall(pattern, text)
+
+
