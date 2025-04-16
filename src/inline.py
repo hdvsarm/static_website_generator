@@ -108,10 +108,7 @@ def split_nodes_link(old_nodes):
             new_nodes.append(TextNode(text[curr_index:], TextType.TEXT))
     return new_nodes
         
-    
-    return new_nodes
-
-node= "This is **text** with an _italic_ word and a `code block` and an ![obi wan image] (https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+# node= "This is **text** with an _italic_ word and a `code block` and an ![obi wan image] (https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
 
 
 def text_to_textnodes(text):
@@ -125,4 +122,20 @@ def text_to_textnodes(text):
     return new_nodes5
 
 
-print(text_to_textnodes(node))
+markdown  = """
+            This is **bolded** paragraph
+
+            This is another paragraph with _italic_ text and `code` here
+            This is the same paragraph on a new line
+
+            - This is a list
+            - with items
+            """
+
+
+
+
+
+
+
+# print(markdown_to_blocks(markdown))
