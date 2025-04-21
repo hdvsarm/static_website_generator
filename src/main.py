@@ -1,46 +1,29 @@
-from textnode import TextNode, TextType
-
-
 import os
 import shutil
-from pathlib import Path
 
-import shutil
-from pathlib import Path
+from copystatic import copy_files_recursive
+from gencontent import generate_page
 
-def clean_directory(path: Path):
-    if path.exists():
-        shutil.rmtree(path)
-    path.mkdir(parents=True, exist_ok=True)
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
-def copy_recursive(src: Path, dest: Path):
-    for item in src.iterdir():
-        dest_item = dest / item.name
-        if item.is_dir():
-            dest_item.mkdir(parents=True, exist_ok=True)
-            copy_recursive(item, dest_item)
-        else:
-            shutil.copy2(item, dest_item)
-            print(f"Copied file: {item} → {dest_item}")
-
-def sync_static_to_public():
-    # Get the root directory (one level above this script)
-    root = Path(__file__).resolve().parent.parent
-
-    src = root / "static"
-    dest = root / "public"
-
-    if not src.exists():
-        raise FileNotFoundError(f"Source directory does not exist: {src}")
-
-    print(f"Cleaning destination: {dest}")
-    clean_directory(dest)
-
-    print(f"Copying from {src} to {dest}")
-    copy_recursive(src, dest)
 
 def main():
-    sync_static_to_public()
-    print(TextNode("This is some anchor text", TextType.BOLD, "https://www.boot.dev"))
+    print("Deleting public directory...")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
+
+    print("Copying static files to public directory...")
+    copy_files_recursive(dir_path_static, dir_path_public)
+
+    print("Generating page...")
+    generate_page(
+        os.path.join(dir_path_content, "index.md"),
+        template_path,
+        os.path.join(dir_path_public, "index.html"),
+    )
+
 
 main()

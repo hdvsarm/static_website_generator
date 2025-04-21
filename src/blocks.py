@@ -1,7 +1,9 @@
 from enum import Enum
-from htmlnode import HTMLNode, ParentNode
-from textnode import text_node_to_html_node, TextNode, TextType
+
+from htmlnode import ParentNode
 from inline import text_to_textnodes
+from textnode import text_node_to_html_node, TextNode, TextType
+
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -10,6 +12,17 @@ class BlockType(Enum):
     QUOTE = "quote"
     OLIST = "ordered_list"
     ULIST = "unordered_list"
+
+
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    filtered_blocks = []
+    for block in blocks:
+        if block == "":
+            continue
+        block = block.strip()
+        filtered_blocks.append(block)
+    return filtered_blocks
 
 
 def block_to_block_type(block):
@@ -36,18 +49,33 @@ def block_to_block_type(block):
                 return BlockType.PARAGRAPH
             i += 1
         return BlockType.OLIST
-    
     return BlockType.PARAGRAPH
 
 
-def markdown_to_blocks(markdown):
-    lines = markdown.split('\n\n')
-    blocks=[]
-    for line in lines:
-        if line!="":
-            blocks.append(line.strip())
-    
-    return blocks
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    children = []
+    for block in blocks:
+        html_node = block_to_html_node(block)
+        children.append(html_node)
+    return ParentNode("div", children, None)
+
+
+def block_to_html_node(block):
+    block_type = block_to_block_type(block)
+    if block_type == BlockType.PARAGRAPH:
+        return paragraph_to_html_node(block)
+    if block_type == BlockType.HEADING:
+        return heading_to_html_node(block)
+    if block_type == BlockType.CODE:
+        return code_to_html_node(block)
+    if block_type == BlockType.OLIST:
+        return olist_to_html_node(block)
+    if block_type == BlockType.ULIST:
+        return ulist_to_html_node(block)
+    if block_type == BlockType.QUOTE:
+        return quote_to_html_node(block)
+    raise ValueError("invalid block type")
 
 
 def text_to_children(text):
